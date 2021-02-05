@@ -1,6 +1,6 @@
 name: CI
 
-on: [push]
+on: [ push ]
 
 jobs:
 
@@ -47,30 +47,30 @@ jobs:
           tags: ipsiman/yambd:latest
 
   deploy:
-   runs-on: ubuntu-latest
-   needs: build_and_push_to_docker_hub
-   steps:
-   - name: executing remote ssh commands to deploy
-     uses: appleboy/ssh-action
-     with:
-       host: ${{ secrets.HOST }}
-       username: ${{ secrets.USER }}
-       key: ${{ secrets.SSH_KEY }}
-       passphrase: ${{ secrets.PASSPHRASE }}
-       source: "docker-compose.yaml, nginx/default.conf"
-       target: "~/app/"
-       script: |
-         sudo docker pull ipsiman/yambd
-         sudo docker stop $(sudo docker ps -a -q)
-         sudo docker run --rm -d -p 5000:5000 ipsiman/yambd
+    runs-on: ubuntu-latest
+    needs: build_and_push_to_docker_hub
+    steps:
+      - name: executing remote ssh commands to deploy
+        uses: appleboy/ssh-action
+        with:
+          host: ${{ secrets.HOST }}
+          username: ${{ secrets.USER }}
+          key: ${{ secrets.SSH_KEY }}
+          passphrase: ${{ secrets.PASSPHRASE }}
+          source: "docker-compose.yaml, nginx/default.conf"
+          target: "~/app/"
+          script: |
+            sudo docker pull ipsiman/yambd
+            sudo docker stop $(sudo docker ps -a -q)
+            sudo docker run --rm -d -p 5000:5000 ipsiman/yambd
 
-   send_message:
-     runs-on: ubuntu-latest
-     needs: deploy
-     steps:
-       - name: send message
-         uses: appleboy/telegram-action@master
-         with:
-           to: ${{ secrets.TELEGRAM_TO }}
-           token: ${{ secrets.TELEGRAM_TOKEN }}
-           message: ${{ github.workflow }} успешно выполнен!
+    send_message:
+      runs-on: ubuntu-latest
+      needs: deploy
+      steps:
+        - name: Telegram Message Notify
+          uses: appleboy/telegram-action@v0.1.0
+        with:
+          to: ${{ secrets.TELEGRAM_TO }}
+          token: ${{ secrets.TELEGRAM_TOKEN }}
+          message: ${{ github.workflow }} успешно выполнен!
