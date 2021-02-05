@@ -45,7 +45,7 @@ jobs:
       - name: Checkout the repo
         uses: actions/checkout@v2
       - name: copy file via ssh password
-        uses: appleboy/ssh-action
+        uses: appleboy/ssh-action@master
         with:
           host: ${{ secrets.HOST }}
           username: ${{ secrets.USER }}
