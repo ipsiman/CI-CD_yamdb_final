@@ -69,7 +69,7 @@ jobs:
      needs: deploy
      steps:
         - name: Telegram Message Notify
-          uses: appleboy/telegram-action@v0.1.0
+          uses: appleboy/telegram-action@master
          with:
            to: ${{ secrets.TELEGRAM_TO }}
            token: ${{ secrets.TELEGRAM_TOKEN }}
